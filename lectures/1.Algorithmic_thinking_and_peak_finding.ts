@@ -76,29 +76,24 @@ function find2DPeak1(arr: number[][]): number {
 
 // Divide and Conquer algorithm. O(nlog2m), n - amount of rows; m - amount of columns
 function find2DPeak2(arr: number[][]): number {
-    const columnLength = arr[0].length;
-    if (columnLength === 1) {
-        const [val] = getMaxValueFromColumn(arr.map(row => row[x]));
+    const n = arr.length;
+    const m = arr[0].length;
+    if (m === 1) {
+        const [val] = getMaxValueFromArr(arr.map(row => row[0]));
         return val;
     }
-    const x = Math.floor(columnLength/2 - 1);
-    return compareLeftAndRightColumns(arr, x);
+    const rowIdx = Math.round(n / 2);
 
-    function compareLeftAndRightColumns(arr: number[][], x: number): number {
-        const [val, y] = getMaxValueFromColumn(arr.map(row => row[x]));
-        if (arr[y][x-1] > val) {
-            return compareLeftAndRightColumns(arr, x-1);
-        } else if (arr[y][x+1] > val) {
-            return compareLeftAndRightColumns(arr, x+1);
-        } else {
-            if (val >= arr[y][x-1] && val >= arr[y][x+1]) {
-                return val;
-            }
-            return val;
-        }
+    const [val, idx] = getMaxValueFromArr(arr[rowIdx]);
+    if (arr[rowIdx-1][idx] > val) {
+        return find2DPeak2(arr.slice(0, rowIdx));
+    } else if (arr[rowIdx+1][idx] > val) {
+        return find2DPeak2(arr.slice(rowIdx));
+    } else {
+        return val;
     }
 
-    function getMaxValueFromColumn(arr: number[]): [number, number] {
+    function getMaxValueFromArr(arr: number[]): [number, number] {
         let val = 0;
         let idx = 0;
         for (let i = 0; i < arr.length; i++) {
